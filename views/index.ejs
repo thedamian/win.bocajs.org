@@ -1,0 +1,31 @@
+
+<%- include('part/top'); %>
+<button onclick="reset()">Reset</button>
+<button onclick="winner()">winner</button>
+<h2>Tickets:</h2>
+<h2  class="center" id="tickets"></h2>
+<h1  class="center" id="winner"></h1>
+<script>
+        let TicketsNoDiv = document.getElementById('tickets');
+      let WinnerDiv = document.getElementById('winner');
+      let tickets = [];
+      socket.on('newPlayerAdded', function(newPlayerNo){
+        tickets.push(newPlayerNo);
+        TicketsNoDiv.innerHTML = tickets.join(",");        
+      });
+      socket.on('winner',(winner) => {
+        //TicketsNoDiv.style.display = "none";
+        WinnerDiv.innerHTML =  winner;
+        WinnerDiv.classList.remove("winner");
+        WinnerDiv.classList.add("winner");
+            // Play Sounds
+            //document.getElementById("soundJackpot").play();
+      }); // on winner
+function winner() {
+    socket.emit('winner','');
+}
+function reset() {
+    socket.emit('reset', '');
+}
+</script>
+<%- include('part/bottom'); %>
