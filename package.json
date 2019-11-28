@@ -21,7 +21,7 @@
     "url": "https://github.com/thedamian/NodeRaffle/issues"
   },
   "homepage": "https://github.com/thedamian/NodeRaffle",
-  "main": "server.js",
+  "main": "win.js",
   "devDependencies": {},
   "keywords": [
     "node",

@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var port = process.env.PORT || 5000;
+var port = process.env.PORT || 5004;
 app.set('view engine', 'ejs'); 
 app.get("/",(req,res)=> {
   console.log("host:",req.headers.host)
