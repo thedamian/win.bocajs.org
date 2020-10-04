@@ -22,11 +22,11 @@ function findWinner(timesAttempted) {
   }
   timesAttempted++;
   let winner = tickets[Math.floor(Math.random()*tickets.length)];
-  let found = winners.find((w) => { return w == winner; });
+  let found = winners.find((w) => { return w == winner.TicketNo; });
   if (found) {
      return findWinner(timesAttempted); 
   } else {
-      return winner;
+      return winner.TicketNo;
   }
 }
 let msg;
