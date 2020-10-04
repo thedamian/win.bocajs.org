@@ -4,14 +4,15 @@
   <script>
       var YourTicketNoDiv = document.getElementById('YourTicketNo');
       var YourTicketNo = 0;
+      var oldTicket = {};
+      var today = new Date();
    
       socket.on('YourTicket', function (NewTicketNo){
-        alert("You have ticket #" + NewTicketNo);
-        YourTicketNo = NewTicketNo;
-        YourTicketNoDiv.innerHTML = NewTicketNo;
+        SetYourTicket(NewTicketNo)
       });
-      socket.on('winner',function (ticket)  {
-        if (ticket == YourTicketNo) {
+      socket.on('winner',function (Winningticket)  {
+        if (Winningticket == YourTicketNo) {
+                
                 console.log("it's my ticket!")
                 YourTicketNoDiv.classList.remove("winner");
                 YourTicketNoDiv.classList.add("winner");
@@ -19,9 +20,29 @@
                 document.getElementById("soundJackpot").play();
             }
       }); // on winner
-  
+      
+      if (localStorage) {
+        try {
+        oldTicket=JSON.parse(localStorage.getItem("ticket"));
+        } catch (ex) {
+          // nothing to catch
+        }
+      } 
       // let's join 
-      socket.emit('newPlayer', '')
+      if (oldTicket && oldTicket.date  && oldTicket.date == today.toDateString()) {
+          SetYourTicket(oldTicket.ticket);
+          console.log("old ticket")
+      } else {
+      socket.emit('newPlayer', ''); 
+      // old ticket
+      }
+
+    function SetYourTicket(TicketNumber) {
+      localStorage.setItem("ticket", JSON.stringify({ticket: TicketNumber,date: today.toDateString()}));
+      alert("You have ticket #" + TicketNumber);
+      YourTicketNo = TicketNumber;
+      YourTicketNoDiv.innerHTML = TicketNumber;
+    }
     </script>
     <audio id="soundJackpot" src="/audio/jackpot1.mp3"></audio>
 <%- include('part/bottom'); %>
