@@ -37,12 +37,31 @@ io.on('connection', function(socket){
     console.log("disconnect reason:",reason);    
     console.log('& socket.id:',socket.id);
   });
-  socket.on('newPlayer', function(msg){
-    let YourTicketNo = tickets.length+1;
-    tickets.push(YourTicketNo);
-    msg = {command:"YourTicket",ticket:YourTicketNo}
-    socket.emit("YourTicket",YourTicketNo);
-    io.emit("newPlayerAdded",YourTicketNo);
+  socket.on('newPlayer', function(TicketCode){
+    let YourTicketNo  = 0;
+    let YourTicketCode = "";
+    console.log("looking for:", TicketCode);
+    console.log(tickets);
+    tickets.map(t=> {
+      if (t.ticketCode == TicketCode)  {
+        YourTicketNo = t.TicketNo;
+        YourTicketCode = TicketCode;
+      }
+    });
+    if (YourTicketCode == "") {
+      YourTicketCode = socket.id;
+    }
+    let NewTicket = {ticketCode:  YourTicketCode, TicketNo: YourTicketNo}; 
+    if (YourTicketNo  == 0) {
+      // Really a new user
+      YourTicketNo = tickets.length+1; 
+      NewTicket = {ticketCode:  YourTicketCode, TicketNo: YourTicketNo};  
+      tickets.push(NewTicket);  
+      console.log("real new member: ", NewTicket);
+      io.emit("newPlayerAdded",YourTicketNo); // broadcast to everyone (including the main screen and secret screen) that we have a new user
+    }
+    console.log("About to send:",NewTicket)
+    socket.emit("YourTicket",NewTicket); // send information to new ticket
   });
   socket.on('reset',data => {
     console.log("reset")

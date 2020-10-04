@@ -5,10 +5,16 @@
       var YourTicketNoDiv = document.getElementById('YourTicketNo');
       var YourTicketNo = 0;
       var oldTicket = {};
+      var TicketCode = "";
       var today = new Date();
    
-      socket.on('YourTicket', function (NewTicketNo){
-        SetYourTicket(NewTicketNo)
+      socket.on('YourTicket', function (TicketObj){
+          //  {ticketCode: socket.id, TicketNo: YourTicketNo}
+        var TicketNumber = TicketObj.TicketNo;
+        localStorage.setItem("ticketCode", TicketObj.ticketCode);
+        alert("You have ticket #" + TicketNumber);
+        YourTicketNo = TicketNumber;
+        YourTicketNoDiv.innerHTML = TicketNumber;
       });
       socket.on('winner',function (Winningticket)  {
         if (Winningticket == YourTicketNo) {
@@ -23,26 +29,18 @@
       
       if (localStorage) {
         try {
-        oldTicket=JSON.parse(localStorage.getItem("ticket"));
+          TicketCode=localStorage.getItem("ticketCode");
+          console.log("found code",TicketCode);
         } catch (ex) {
-          // nothing to catch
+          // nothing to catch. it's a new ticket
         }
       } 
-      // let's join 
-      if (oldTicket && oldTicket.date  && oldTicket.date == today.toDateString()) {
-          SetYourTicket(oldTicket.ticket);
-          console.log("old ticket")
-      } else {
-      socket.emit('newPlayer', ''); 
-      // old ticket
+      if (!TicketCode) {
+        TicketCode = "";
       }
 
-    function SetYourTicket(TicketNumber) {
-      localStorage.setItem("ticket", JSON.stringify({ticket: TicketNumber,date: today.toDateString()}));
-      alert("You have ticket #" + TicketNumber);
-      YourTicketNo = TicketNumber;
-      YourTicketNoDiv.innerHTML = TicketNumber;
-    }
+      socket.emit('newPlayer', TicketCode); 
+      console.log("signing up as ",TicketCode)
     </script>
     <audio id="soundJackpot" src="/audio/jackpot1.mp3"></audio>
 <%- include('part/bottom'); %>
